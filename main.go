@@ -39,6 +39,7 @@ func main() {
 		DB: database.New(conn),
 	}
 
+	// config router settings
 	router := chi.NewRouter()
 	router.Use(cors.Handler(cors.Options{
 		AllowedOrigins:   []string{"https://*", "http://*"},
@@ -49,6 +50,7 @@ func main() {
 		MaxAge:           300,
 	}))
 
+	// define routes
 	v1Router := chi.NewRouter()
 	v1Router.Head("/healthz", handlerReadiness)
 	v1Router.Get("/err", handlerErr)
@@ -61,9 +63,12 @@ func main() {
 
 	v1Router.Post("/feed_follows", apiCfg.middlewareAuth(apiCfg.handlerCreateFeedFollow))
 	v1Router.Get("/feed_follows", apiCfg.middlewareAuth(apiCfg.handlerGetFeedFollows))
+	v1Router.Delete("/feed_follows/{feedFollowID}", apiCfg.middlewareAuth(apiCfg.handlerDeleteFeedFollow))
 
+	// mount routers inside version
 	router.Mount("/v1", v1Router)
 
+	// serving using routes and ports
 	server := &http.Server{
 		Handler: router,
 		Addr:    ":" + portString,
