@@ -1,4 +1,4 @@
-package main
+package handlers
 
 import (
 	"encoding/json"
@@ -11,7 +11,7 @@ import (
 	"github.com/mrblack11/rss_agg/internal/database"
 )
 
-func (apiCfg *apiConfig) handlerCreateFeed(w http.ResponseWriter, r *http.Request, user database.User) {
+func (apiCfg *ApiConfig) HandlerCreateFeed(w http.ResponseWriter, r *http.Request, user database.User) {
 	type parameters struct {
 		Name string `json:"name"`
 		URL  string `json:"url"`
@@ -40,10 +40,10 @@ func (apiCfg *apiConfig) handlerCreateFeed(w http.ResponseWriter, r *http.Reques
 		return
 	}
 
-	common.RespondWithJson(w, 201, databaseFeedToFeed(feed))
+	common.RespondWithJson(w, 201, common.DatabaseFeedToFeed(feed))
 }
 
-func (apiCfg *apiConfig) handlerGetFeeds(w http.ResponseWriter, r *http.Request) {
+func (apiCfg *ApiConfig) HandlerGetFeeds(w http.ResponseWriter, r *http.Request) {
 	feeds, err := apiCfg.DB.GetFeeds(r.Context())
 
 	if err != nil {
@@ -51,5 +51,5 @@ func (apiCfg *apiConfig) handlerGetFeeds(w http.ResponseWriter, r *http.Request)
 		return
 	}
 
-	common.RespondWithJson(w, 200, databaseFeedsToFeeds(feeds))
+	common.RespondWithJson(w, 200, common.DatabaseFeedsToFeeds(feeds))
 }

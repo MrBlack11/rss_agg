@@ -1,4 +1,4 @@
-package main
+package handlers
 
 import (
 	"net/http"
@@ -6,6 +6,6 @@ import (
 	"github.com/mrblack11/rss_agg/common"
 )
 
-func handlerErr(w http.ResponseWriter, r *http.Request) {
+func HandlerErr(w http.ResponseWriter, r *http.Request) {
 	common.RespondWithError(w, 400, "Something went wrong")
 }

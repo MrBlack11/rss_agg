@@ -11,12 +11,9 @@ import (
 	"github.com/go-chi/cors"
 	"github.com/joho/godotenv"
 	_ "github.com/lib/pq"
+	"github.com/mrblack11/rss_agg/handlers"
 	"github.com/mrblack11/rss_agg/internal/database"
 )
-
-type apiConfig struct {
-	DB *database.Queries
-}
 
 func main() {
 	godotenv.Load(".env")
@@ -37,7 +34,7 @@ func main() {
 	}
 
 	db := database.New(conn)
-	apiCfg := apiConfig{
+	apiCfg := handlers.ApiConfig{
 		DB: db,
 	}
 
@@ -56,19 +53,19 @@ func main() {
 
 	// define routes
 	v1Router := chi.NewRouter()
-	v1Router.Head("/healthz", handlerReadiness)
-	v1Router.Get("/err", handlerErr)
+	v1Router.Head("/healthz", handlers.HandlerReadiness)
+	v1Router.Get("/err", handlers.HandlerErr)
 
-	v1Router.Post("/users", apiCfg.handlerCreateUser)
-	v1Router.Get("/users", apiCfg.middlewareAuth(apiCfg.handlerGetUser))
-	v1Router.Get("/posts", apiCfg.middlewareAuth(apiCfg.handlerGetPostsForUser))
+	v1Router.Post("/users", apiCfg.HandlerCreateUser)
+	v1Router.Get("/users", apiCfg.MiddlewareAuth(apiCfg.HandlerGetUser))
+	v1Router.Get("/posts", apiCfg.MiddlewareAuth(apiCfg.HandlerGetPostsForUser))
 
-	v1Router.Post("/feeds", apiCfg.middlewareAuth(apiCfg.handlerCreateFeed))
-	v1Router.Get("/feeds", apiCfg.handlerGetFeeds)
+	v1Router.Post("/feeds", apiCfg.MiddlewareAuth(apiCfg.HandlerCreateFeed))
+	v1Router.Get("/feeds", apiCfg.HandlerGetFeeds)
 
-	v1Router.Post("/feed_follows", apiCfg.middlewareAuth(apiCfg.handlerCreateFeedFollow))
-	v1Router.Get("/feed_follows", apiCfg.middlewareAuth(apiCfg.handlerGetFeedFollows))
-	v1Router.Delete("/feed_follows/{feedFollowID}", apiCfg.middlewareAuth(apiCfg.handlerDeleteFeedFollow))
+	v1Router.Post("/feed_follows", apiCfg.MiddlewareAuth(apiCfg.HandlerCreateFeedFollow))
+	v1Router.Get("/feed_follows", apiCfg.MiddlewareAuth(apiCfg.HandlerGetFeedFollows))
+	v1Router.Delete("/feed_follows/{feedFollowID}", apiCfg.MiddlewareAuth(apiCfg.HandlerDeleteFeedFollow))
 
 	// mount routers inside version
 	router.Mount("/v1", v1Router)
