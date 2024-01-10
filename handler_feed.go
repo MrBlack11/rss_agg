@@ -7,6 +7,7 @@ import (
 	"time"
 
 	"github.com/google/uuid"
+	"github.com/mrblack11/rss_agg/common"
 	"github.com/mrblack11/rss_agg/internal/database"
 )
 
@@ -21,7 +22,7 @@ func (apiCfg *apiConfig) handlerCreateFeed(w http.ResponseWriter, r *http.Reques
 	params := parameters{}
 	err := decoder.Decode(&params)
 	if err != nil {
-		respondWithError(w, 400, fmt.Sprintf("Error parsing JSON: %v", err))
+		common.RespondWithError(w, 400, fmt.Sprintf("Error parsing JSON: %v", err))
 		return
 	}
 
@@ -35,20 +36,20 @@ func (apiCfg *apiConfig) handlerCreateFeed(w http.ResponseWriter, r *http.Reques
 	})
 
 	if err != nil {
-		respondWithError(w, 400, fmt.Sprintf("Couldn't create user: %v", err))
+		common.RespondWithError(w, 400, fmt.Sprintf("Couldn't create user: %v", err))
 		return
 	}
 
-	respondWithJson(w, 201, databaseFeedToFeed(feed))
+	common.RespondWithJson(w, 201, databaseFeedToFeed(feed))
 }
 
 func (apiCfg *apiConfig) handlerGetFeeds(w http.ResponseWriter, r *http.Request) {
 	feeds, err := apiCfg.DB.GetFeeds(r.Context())
 
 	if err != nil {
-		respondWithError(w, 400, fmt.Sprintf("Couldn't get feeds: %v", err))
+		common.RespondWithError(w, 400, fmt.Sprintf("Couldn't get feeds: %v", err))
 		return
 	}
 
-	respondWithJson(w, 200, databaseFeedsToFeeds(feeds))
+	common.RespondWithJson(w, 200, databaseFeedsToFeeds(feeds))
 }

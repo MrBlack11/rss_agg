@@ -1,7 +1,11 @@
 package main
 
-import "net/http"
+import (
+	"net/http"
+
+	"github.com/mrblack11/rss_agg/common"
+)
 
 func handlerReadiness(w http.ResponseWriter, r *http.Request) {
-	respondWithJson(w, 200, struct{}{})
+	common.RespondWithJson(w, 200, struct{}{})
 }
